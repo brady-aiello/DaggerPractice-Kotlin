@@ -32,6 +32,9 @@ object AppModule {
             .create()
     }
 
+    /**
+     * Adding a custom HttpLoggingInterceptor so we can see our HTTP requests when debugging.
+     */
     @JvmStatic
     @Singleton
     @Provides

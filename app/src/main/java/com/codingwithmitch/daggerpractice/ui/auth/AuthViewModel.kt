@@ -9,7 +9,7 @@ import javax.inject.Inject
 
 class AuthViewModel @Inject constructor(private val authApi: AuthApi) : ViewModel() {
 
-    private val authUser = MediatorLiveData<User>()
+    private val authUser = MediatorLiveData<AuthStatus<User>>()
     companion object {
         private const val TAG = "AuthViewModel"
     }
@@ -19,13 +19,22 @@ class AuthViewModel @Inject constructor(private val authApi: AuthApi) : ViewMode
 
     }
 
-    fun observeUser(): LiveData<User> {
+    fun observeUser(): LiveData<AuthStatus<User>> {
         return authUser
     }
 
     fun authenticateWithId(userId: Int): Unit {
-        val source: LiveData<User> = LiveDataReactiveStreams.fromPublisher(
+        authUser.value = AuthStatus.Loading<User>(null)
+        val source: LiveData<AuthStatus<User>> = LiveDataReactiveStreams.fromPublisher(
             authApi.getUser(userId)
+                .onErrorReturn { User("error@email.com", -1, "Error McErrorFace", "error.com") }
+                .map { user ->
+                    if (user.id == -1) {
+                        AuthStatus.Error<User>("Could not authenticate", null)
+                    } else {
+                        AuthStatus.Authenticated<User>(user)
+                    }
+                }
                 .subscribeOn(Schedulers.io())
         )
         authUser.addSource(source) { user ->

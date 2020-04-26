@@ -7,9 +7,12 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ProgressBar
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import com.bumptech.glide.RequestManager
 import com.codingwithmitch.daggerpractice.R
+import com.codingwithmitch.daggerpractice.models.User
 import com.codingwithmitch.daggerpractice.viewmodels.ViewModelProviderFactory
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
@@ -22,6 +25,7 @@ class AuthActivity : DaggerAppCompatActivity(), View.OnClickListener {
 
     lateinit var userId: EditText
     lateinit var viewModel: AuthViewModel
+    lateinit var progressBar: ProgressBar
 
     @Inject
     lateinit var providerFactory: ViewModelProviderFactory
@@ -35,18 +39,35 @@ class AuthActivity : DaggerAppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
+        progressBar = findViewById(R.id.progress_bar)
         userId = findViewById(R.id.user_id_input)
         findViewById<Button>(R.id.login_button).setOnClickListener(this)
         viewModel = providerFactory.create(AuthViewModel::class.java)
-        //viewModel = ViewModelProviders.of(this, providerFactory).get(AuthViewModel::class.java)
         setTheLogo()
         subscribeObservers()
     }
 
     private fun subscribeObservers() : Unit {
-        viewModel.observeUser().observe(this, Observer { user ->
-            Log.d(TAG, "subscribeObservers: ${user.email}")
+        viewModel.observeUser().observe(this, Observer<AuthStatus<User>> { status ->
+            when (status) {
+                is AuthStatus.Loading -> showProgressBar(true)
+                is AuthStatus.Authenticated -> {
+                    showProgressBar(false)
+                    Log.d(TAG, "subscribeObservers: ${status.data.email}")
+                }
+                is AuthStatus.Error -> {
+                    showProgressBar(false)
+                    Toast.makeText(this, "${status.msg}\nDid you enter a number between 1 and 10?", Toast.LENGTH_LONG).show()
+                }
+                is AuthStatus.NotAuthenticated -> {
+                    showProgressBar(false)
+                }
+            }
         })
+    }
+
+    private fun showProgressBar(isVisible: Boolean) {
+        progressBar.visibility = if (isVisible) ProgressBar.VISIBLE else ProgressBar.GONE
     }
 
     private fun setTheLogo() : Unit {
