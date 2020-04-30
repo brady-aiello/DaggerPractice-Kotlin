@@ -2,14 +2,17 @@ package com.codingwithmitch.daggerpractice.ui.auth
 
 import android.util.Log
 import androidx.lifecycle.*
+import com.codingwithmitch.daggerpractice.SessionManager
 import com.codingwithmitch.daggerpractice.models.User
 import com.codingwithmitch.daggerpractice.network.auth.AuthApi
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-class AuthViewModel @Inject constructor(private val authApi: AuthApi) : ViewModel() {
+class AuthViewModel @Inject constructor(private val authApi: AuthApi,
+                                        private val sessionManager: SessionManager) : ViewModel() {
 
-    private val authUser = MediatorLiveData<AuthStatus<User>>()
+    //private val authUser = MediatorLiveData<AuthStatus<User>>()
+
     companion object {
         private const val TAG = "AuthViewModel"
     }
@@ -19,13 +22,13 @@ class AuthViewModel @Inject constructor(private val authApi: AuthApi) : ViewMode
 
     }
 
-    fun observeUser(): LiveData<AuthStatus<User>> {
-        return authUser
+    fun observeAuthState(): LiveData<AuthStatus<User>> {
+        return sessionManager.getAuthUser()
     }
 
-    fun authenticateWithId(userId: Int): Unit {
-        authUser.value = AuthStatus.Loading<User>(null)
-        val source: LiveData<AuthStatus<User>> = LiveDataReactiveStreams.fromPublisher(
+    private fun queryUserId(userId: Int) : LiveData<AuthStatus<User>> {
+        //authUser.value = AuthStatus.Loading<User>(null)
+        return LiveDataReactiveStreams.fromPublisher(
             authApi.getUser(userId)
                 .onErrorReturn { User("error@email.com", -1, "Error McErrorFace", "error.com") }
                 .map { user ->
@@ -37,9 +40,10 @@ class AuthViewModel @Inject constructor(private val authApi: AuthApi) : ViewMode
                 }
                 .subscribeOn(Schedulers.io())
         )
-        authUser.addSource(source) { user ->
-            authUser.value = user
-            authUser.removeSource(source)
-         }
+    }
+
+    fun authenticateWithId(userId: Int): Unit {
+        Log.d(TAG, "authenticateWithId: attempting to log in")
+        sessionManager.authenticateWithId(queryUserId(userId))
     }
 }

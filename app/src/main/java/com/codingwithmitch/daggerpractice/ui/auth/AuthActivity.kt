@@ -1,5 +1,6 @@
 package com.codingwithmitch.daggerpractice.ui.auth
 
+import android.content.Intent
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.TextUtils
@@ -13,6 +14,7 @@ import androidx.lifecycle.Observer
 import com.bumptech.glide.RequestManager
 import com.codingwithmitch.daggerpractice.R
 import com.codingwithmitch.daggerpractice.models.User
+import com.codingwithmitch.daggerpractice.ui.main.MainActivity
 import com.codingwithmitch.daggerpractice.viewmodels.ViewModelProviderFactory
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
@@ -48,12 +50,13 @@ class AuthActivity : DaggerAppCompatActivity(), View.OnClickListener {
     }
 
     private fun subscribeObservers() : Unit {
-        viewModel.observeUser().observe(this, Observer<AuthStatus<User>> { status ->
+        viewModel.observeAuthState().observe(this, Observer<AuthStatus<User>> { status ->
             when (status) {
                 is AuthStatus.Loading -> showProgressBar(true)
                 is AuthStatus.Authenticated -> {
                     showProgressBar(false)
                     Log.d(TAG, "subscribeObservers: ${status.data.email}")
+                    onLoginSuccess()
                 }
                 is AuthStatus.Error -> {
                     showProgressBar(false)
@@ -64,6 +67,12 @@ class AuthActivity : DaggerAppCompatActivity(), View.OnClickListener {
                 }
             }
         })
+    }
+
+    private fun onLoginSuccess() {
+        val intent = Intent(this, MainActivity::class.java)
+        startActivity(intent)
+        finish()
     }
 
     private fun showProgressBar(isVisible: Boolean) {
