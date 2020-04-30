@@ -5,11 +5,18 @@ import android.view.Menu
 import android.view.MenuItem
 import com.codingwithmitch.BaseActivity
 import com.codingwithmitch.daggerpractice.R
+import com.codingwithmitch.daggerpractice.ui.main.profile.ProfileFragment
 
 class MainActivity: BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        testFragment()
+    }
+
+    private fun testFragment() {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.main_container, ProfileFragment()).commit()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
