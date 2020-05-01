@@ -5,7 +5,7 @@ import android.view.Menu
 import android.view.MenuItem
 import com.codingwithmitch.BaseActivity
 import com.codingwithmitch.daggerpractice.R
-import com.codingwithmitch.daggerpractice.ui.main.profile.ProfileFragment
+import com.codingwithmitch.daggerpractice.ui.main.posts.PostsFragment
 
 class MainActivity: BaseActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -16,7 +16,7 @@ class MainActivity: BaseActivity() {
 
     private fun testFragment() {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.main_container, ProfileFragment()).commit()
+            .replace(R.id.main_container, PostsFragment()).commit()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

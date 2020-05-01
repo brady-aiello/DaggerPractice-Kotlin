@@ -3,17 +3,17 @@ package com.codingwithmitch.daggerpractice.models
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 
-data class User(
+data class Post(
     @Expose
-    @SerializedName("email")
-    val email: String,
+    @SerializedName("userId")
+    val userId: Int,
     @Expose
     @SerializedName("id")
     val id: Int,
     @Expose
-    @SerializedName("username")
-    val username: String,
+    @SerializedName("title")
+    val title: String,
     @Expose
-    @SerializedName("website")
-    val website: String
+    @SerializedName("body")
+    val body: String
 )
