@@ -8,5 +8,5 @@ import retrofit2.http.Query
 interface MainApi {
     // posts?userId=1
     @GET("posts")
-    fun getUser(@Query("userId") id: Int): Flowable<Post>
+    fun getPostsFromUser(@Query("userId") id: Int): Flowable<List<Post>>
 }
