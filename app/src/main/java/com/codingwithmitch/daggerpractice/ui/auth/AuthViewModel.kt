@@ -10,9 +10,6 @@ import javax.inject.Inject
 
 class AuthViewModel @Inject constructor(private val authApi: AuthApi,
                                         private val sessionManager: SessionManager) : ViewModel() {
-
-    //private val authUser = MediatorLiveData<AuthStatus<User>>()
-
     companion object {
         private const val TAG = "AuthViewModel"
     }

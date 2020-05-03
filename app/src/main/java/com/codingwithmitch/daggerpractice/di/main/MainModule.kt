@@ -8,12 +8,14 @@ import retrofit2.Retrofit
 
 @Module
 object MainModule {
+    @MainScope
     @JvmStatic
     @Provides
     fun provideMainApi(retrofit: Retrofit): MainApi {
         return retrofit.create(MainApi::class.java)
     }
 
+    @MainScope
     @JvmStatic
     @Provides
     fun providePostsRecyclerAdapter(): PostsRecyclerViewAdapter {

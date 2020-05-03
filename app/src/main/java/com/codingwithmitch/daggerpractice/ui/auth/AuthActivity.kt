@@ -18,6 +18,7 @@ import com.codingwithmitch.daggerpractice.ui.main.MainActivity
 import com.codingwithmitch.daggerpractice.viewmodels.ViewModelProviderFactory
 import dagger.android.support.DaggerAppCompatActivity
 import javax.inject.Inject
+import javax.inject.Named
 
 class AuthActivity : DaggerAppCompatActivity(), View.OnClickListener {
 
@@ -37,7 +38,15 @@ class AuthActivity : DaggerAppCompatActivity(), View.OnClickListener {
 
     @Inject
     lateinit var requestManager: RequestManager
-    
+
+    @Inject
+    @Named("app_user")
+    lateinit var appUser: User
+
+    @Inject
+    @Named("auth_user")
+    lateinit var authUser: User
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_auth)
@@ -47,6 +56,9 @@ class AuthActivity : DaggerAppCompatActivity(), View.OnClickListener {
         viewModel = providerFactory.create(AuthViewModel::class.java)
         setTheLogo()
         subscribeObservers()
+        Log.d(TAG, "onCreate77: appUser ${System.identityHashCode(appUser)}")
+        Log.d(TAG, "onCreate77: authUser ${System.identityHashCode(authUser)}")
+
     }
 
     private fun subscribeObservers() : Unit {

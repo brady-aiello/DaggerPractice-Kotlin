@@ -7,6 +7,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.request.RequestOptions
 import com.codingwithmitch.daggerpractice.R
+import com.codingwithmitch.daggerpractice.models.User
 import com.codingwithmitch.daggerpractice.util.Constants
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -17,6 +18,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Named
 import javax.inject.Singleton
 
 
@@ -93,5 +95,13 @@ object AppModule {
     @Provides
     fun provideAppDrawable(application: Application) : Drawable {
         return ContextCompat.getDrawable(application, R.drawable.logo)!!
+    }
+
+    @Singleton
+    @JvmStatic
+    @Provides
+    @Named("app_user")
+    fun provideSomeUser(): User {
+        return User("dummy email", 42, "imaginary user", "idontexist.com")
     }
 }
